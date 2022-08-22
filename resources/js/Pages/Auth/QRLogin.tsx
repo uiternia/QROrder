@@ -1,7 +1,13 @@
 import QRReader, { QRCode } from "@/Components/QRReader ";
 import React, { useState } from "react";
+import { Button, Stack } from "@mui/material";
+import { useForm } from "@inertiajs/inertia-react";
 
 function QRLogin() {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        uuid: "",
+    });
+
     const [stopOnRecognize, setStopOnRecognize] = React.useState(true);
     const [qrParam, setQRParam] = useState({
         width: 500,
@@ -9,10 +15,11 @@ function QRLogin() {
         pause: true,
     });
 
-    const [code, setCode] = useState("");
+    //const [code, setCode] = useState("");
 
     const onRecognizeCode = (e: QRCode) => {
-        setCode(e.data);
+        setData("uuid", e.data);
+        //setCode(e.data);
         if (stopOnRecognize) {
             setQRParam((e) => {
                 return { ...e, pause: true };
@@ -26,11 +33,18 @@ function QRLogin() {
         });
     };
 
+    const login = (e: any) => {
+        e.preventDefault();
+        post("auth/qr_login");
+    };
+
     return (
         <div className="App">
-            <QRReader {...qrParam} gecognizeCallback={onRecognizeCode} />
+            <Stack alignItems="center" pt={2} mx={10}>
+                <QRReader {...qrParam} gecognizeCallback={onRecognizeCode} />
+            </Stack>
             <div>
-                <label>
+                {/* <label>
                     <input
                         type="hidden"
                         name="rdo"
@@ -52,12 +66,21 @@ function QRLogin() {
                         checked={!stopOnRecognize}
                     />
                     認識時も処理継続
-                </label>
-
-                <button onClick={toggleVideoStream}>
-                    {qrParam.pause ? "スキャン開始" : "スキャン停止"}
-                </button>
-                <p>QRコード：{code}</p>
+                </label> */}
+                <Stack alignItems="center" pt={2}>
+                    <Button variant="contained" onClick={toggleVideoStream}>
+                        {qrParam.pause ? "スキャン開始" : "スキャン停止"}
+                    </Button>
+                    <Stack pt={4}>
+                        <Button
+                            disabled={data.uuid === ""}
+                            variant="contained"
+                            onClick={login}
+                        >
+                            注文を開始する
+                        </Button>
+                    </Stack>
+                </Stack>
             </div>
         </div>
     );

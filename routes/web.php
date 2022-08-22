@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Auth\QrLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,9 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+//Route::get('auth/qr_login', [QrLoginController::class, 'showQrReader'])->name('qr_login');   // ログインフォーム
+Route::post('auth/qr_login', [QrLoginController::class, 'Qrlogin'])->name('qr_login_post');    // Ajax通信
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -28,4 +32,4 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
